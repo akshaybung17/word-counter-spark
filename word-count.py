@@ -1,10 +1,15 @@
 from pyspark import SparkConf, SparkContext
+import re
 
 conf = SparkConf().setMaster("local").setAppName("WordCount")
 sc = SparkContext(conf = conf)
 
+def normalizeWords(text):
+    return re.compile(r'\W+', re.UNICODE).split(text.lower())
+
+
 input = sc.textFile("book.txt")
-words = input.flatMap(lambda x: x.split())
+words = input.flatMap(normalizeWords)
 wordCounts = words.countByValue()
 
 
